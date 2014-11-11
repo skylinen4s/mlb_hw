@@ -1,15 +1,15 @@
 import sys
 import glob
 import os
+import datetime
 
-startday = sys.argv[1]+'-'+sys.argv[2]+'-'+sys.argv[3]
-endday = sys.argv[4]+'-'+sys.argv[5]+'-'+sys.argv[6]
-
-print "start: ",startday
-print "end: ",endday
-
-outputFile = 'train_data'
-out = open(outputFile, 'w')
+def tranDate(date):
+	if date is not '0':
+		date = date.split('-')
+		date = datetime.date(int(date[0]),int(date[1]),int(date[2]))
+		return date
+	else:
+		return 0
 
 def getData(fileName):
 	data = fileName.readline().rstrip('\n').split(',')
@@ -21,6 +21,20 @@ def getData(fileName):
 		if data[i] == "NULL" or data[i] == "--":
 			data[i] = "0"
 	return data
+
+sday = datetime.date(int(sys.argv[1]),int(sys.argv[2]),int(sys.argv[3]))
+eday = datetime.date(int(sys.argv[4]),int(sys.argv[5]),int(sys.argv[6]))
+
+print "Date1(start): ",sday
+print "Date2(end): ",eday
+
+if (sday.weekday() is 5) or (sday.weekday() is 6):
+	print "Date1 is not weekday"
+if (eday.weekday() is 5) or (eday.weekday() is 6):
+	print "Date2 is not weekday"
+
+outputFile = 'train_data'
+out = open(outputFile, 'w')
 
 filenum = 0
 for files in glob.glob('../stock/*'):
@@ -37,9 +51,15 @@ for files in glob.glob('../stock/*'):
 		if not line: break
 		
 		data0 = getData(f)
-
-		if data0[0] == endday:
+		d = tranDate(data0[0])
+		if d == eday:
 			end = True
+			break
+		if d < eday:
+			print "There is no data of this day:", eday
+			break
+		if d < sday:
+			print "There is no data of this day:", sday
 			break
 
 	num = 0
@@ -80,7 +100,7 @@ for files in glob.glob('../stock/*'):
 		if data3[0] == '0':
 			break
 
-		if data1[0] == startday or data1[0] ==endday: 
+		if tranDate(data1[0]) == sday or tranDate(data1[0]) ==eday: 
 			train_data = str(rise) + \
 					  "\t1:"+data1[1]+ \
 					  "\t2:"+data1[2]+ \
@@ -102,8 +122,8 @@ for files in glob.glob('../stock/*'):
 			          "\t18:"+data3[6]+ \
 					  "\t19:"+c_dif_rise+"\n"
 			out.write(train_data)
-			print train_data
-			if data1[0] == startday:
+			#print train_data
+			if tranDate(data1[0]) == sday:
 				break
 		
 	f.close()
