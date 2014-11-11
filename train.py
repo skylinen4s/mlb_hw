@@ -44,12 +44,12 @@ for files in glob.glob('../stock/*'):
 	stockName = os.path.basename(inputFile)
 	print "stock:"+str(stockName)+" number:"+str(filenum)
 	#out.write(stockName+":")
+	
+	line = f.readline().rstrip('\n')
+	if not line: break
 
 	end = False
 	while True:
-		line = f.readline().rstrip('\n')
-		if not line: break
-		
 		data0 = getData(f)
 		d = tranDate(data0[0])
 		if d == eday:
@@ -128,3 +128,6 @@ for files in glob.glob('../stock/*'):
 		
 	f.close()
 out.close()
+
+os.system('./../bin/svm-scale -s train_scale_model train_data > train_data.scale')
+os.system('./../bin/rvkde --best --cv --classify -n 5 -v train_data.scale > train_result')
