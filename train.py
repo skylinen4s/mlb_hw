@@ -8,7 +8,7 @@ endday = sys.argv[4]+'-'+sys.argv[5]+'-'+sys.argv[6]
 print "start: ",startday
 print "end: ",endday
 
-outputFile = 'train_data.txt'
+outputFile = 'train_data'
 out = open(outputFile, 'w')
 
 def getData(fileName):
@@ -18,7 +18,7 @@ def getData(fileName):
 			data.insert(i,'0')
 		data.remove('')
 	for i in range(len(data)):
-		if data[i] == "NULL":
+		if data[i] == "NULL" or data[i] == "--":
 			data[i] = "0"
 	return data
 
@@ -77,31 +77,34 @@ for files in glob.glob('../stock/*'):
 			dif_rise = rise - 0
 		c_dif_rise = str(dif_rise)
 
-		if data3[0] == startday or data3[0] == '0':
+		if data3[0] == '0':
 			break
 
-		train_data = str(rise) + \
-				  "\t1:"+data1[1]+ \
-				  "\t2:"+data1[2]+ \
-				  "\t3:"+data1[3]+ \
-				  "\t4:"+data1[4]+ \
-				  "\t5:"+data1[5]+ \
-		          "\t6:"+data1[6]+ \
-				  "\t7:"+data2[1]+ \
-				  "\t8:"+data2[2]+ \
-				  "\t9:"+data2[3]+ \
-				  "\t10:"+data2[4]+ \
-				  "\t11:"+data2[5]+ \
-		          "\t12:"+data2[6]+ \
-				  "\t13:"+data3[1]+ \
-				  "\t14:"+data3[2]+ \
-				  "\t15:"+data3[3]+ \
-				  "\t16:"+data3[4]+ \
-				  "\t17:"+data3[5]+ \
-		          "\t18:"+data3[6]+ \
-				  "\t19:"+c_dif_rise+"\n"
-		out.write(train_data)
-		print train_data
+		if data1[0] == startday or data1[0] ==endday: 
+			train_data = str(rise) + \
+					  "\t1:"+data1[1]+ \
+					  "\t2:"+data1[2]+ \
+					  "\t3:"+data1[3]+ \
+					  "\t4:"+data1[4]+ \
+					  "\t5:"+data1[5]+ \
+			          "\t6:"+data1[6]+ \
+					  "\t7:"+data2[1]+ \
+					  "\t8:"+data2[2]+ \
+					  "\t9:"+data2[3]+ \
+					  "\t10:"+data2[4]+ \
+					  "\t11:"+data2[5]+ \
+			          "\t12:"+data2[6]+ \
+					  "\t13:"+data3[1]+ \
+					  "\t14:"+data3[2]+ \
+					  "\t15:"+data3[3]+ \
+					  "\t16:"+data3[4]+ \
+					  "\t17:"+data3[5]+ \
+			          "\t18:"+data3[6]+ \
+					  "\t19:"+c_dif_rise+"\n"
+			out.write(train_data)
+			print train_data
+			if data1[0] == startday:
+				break
 		
 	f.close()
 out.close()
